@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing Cars Animation</title>
+    <style>
+        /* Basic styling for the container */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .road {
+            width: 100%;
+            height: 100px; /* Increased height for better visibility */
+            background: #333;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .car {
+            width: 100px; /* Width adjusted for full visibility */
+            height: 50px; /* Height adjusted for full visibility */
+            position: absolute;
+            top: 20px; /* Adjusted to fit within the road */
+            border-radius: 5px;
+            background-image: url('porsche-model.png'); /* Default car image */
+            background-size: cover;
+            animation: drive 1s linear forwards; /* Fast animation */
+        }
+
+        @keyframes drive {
+            0% {
+                left: -150px; /* Start from outside the left */
+                transform: translateY(0); /* Start position */
+            }
+            100% {
+                left: 100vw; /* End outside the right */
+                transform: translateY(0); /* End position */
+            }
+        }
+
+        /* Styling for buttons */
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: #fff;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Styling for credit */
+        .credit {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="road" id="road"></div>
+
+<div class="controls">
+    <button id="playBtn">Play</button>
+    <button id="pauseBtn" disabled>Pause</button>
+    <select id="carSelector">
+        <option value="porsche-model.png">Car 1</option>
+        <option value="porsche-model.png">Car 2</option>
+        <option value="porsche-model.png">Car 3</option>
+        <option value="porsche-model.png">Car 4</option>
+        <option value="porsche-model.png">Car 5</option>
+    </select>
+</div>
+
+<div class="credit">Created by wilmvss</div>
+
+<video id="commentatorSound" preload="auto" style="display:none;">
+    <source src="wzzn.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<script>
+    const road = document.getElementById('road');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const commentatorSound = document.getElementById('commentatorSound');
+
+    // Function to create a new car
+    function createCar() {
+        const car = document.createElement('div');
+        car.className = 'car';
+        car.style.backgroundImage = `url('porsche-model.png')`; // Set the image
+
+        road.appendChild(car);
+
+        // Set animation for the car
+        car.style.animation = 'drive 1s linear forwards'; // Fast animation
+
+        // Remove the car after it leaves the screen
+        car.addEventListener('animationend', () => {
+            car.remove(); // Remove car from DOM
+        });
+    }
+
+    playBtn.onclick = () => {
+        playBtn.disabled = true;
+        pauseBtn.disabled = false;
+
+        // Start generating cars
+        createCar(); // Create the first car
+        const interval = setInterval(() => {
+            createCar(); // Create a new car every second
+        }, 1000); // Create a new car every second
+
+        // Play the commentator sound
+        commentatorSound.play();
+
+        // Stop generating cars and commentator sound when pause is clicked
+        pauseBtn.onclick = () => {
+            clearInterval(interval);
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            commentatorSound.pause(); // Pause the sound
+            commentatorSound.currentTime = 0; // Reset sound to start
+        };
+    };
+
+    // Pause animation and sound initially
+    commentatorSound.pause();
+</script>
+
+</body>
+</html>
